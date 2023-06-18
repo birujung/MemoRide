@@ -1,102 +1,115 @@
 package com.birujung.memoride_frontend;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
+import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.MenuItem;
+import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
-import com.birujung.memoride_frontend.R;
-import com.birujung.memoride_frontend.TourCard;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.birujung.memoride_frontend.helper.useFetch;
-import com.birujung.memoride_frontend.helper.useFetch.FetchCallback;
 import com.birujung.memoride_frontend.model.TourData;
 import com.birujung.memoride_frontend.request.BaseAPIService;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.birujung.memoride_frontend.request.BaseAPIUtils;
+import com.birujung.memoride_frontend.request.RetrofitClient;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class AllToursActivity extends Activity {
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
-    private LinearLayout tourCardContainer;
-    private TextView loadingText;
-    private TextView errorText;
-    Context mContext;
+public class AllToursActivity extends AppCompatActivity {
+    private RecyclerView recyclerView;
+    private ToursAdapter toursAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_all_tours);
-        mContext = this;
 
-        tourCardContainer = findViewById(R.id.tour_card_container);
-        loadingText = findViewById(R.id.loading_text);
-        errorText = findViewById(R.id.error_text);
+        recyclerView = findViewById(R.id.tours_recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        toursAdapter = new ToursAdapter();
+        recyclerView.setAdapter(toursAdapter);
 
         fetchTours();
+    }
 
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
-        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+    private void fetchTours() {
+        BaseAPIService apiService = BaseAPIUtils.getAPIService();
+        Call<JsonObject> call = apiService.getTours();
+
+        call.enqueue(new Callback<JsonObject>() {
             @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.action_home:
-                        Intent intent = new Intent(mContext, MainActivity.class);
-                        startActivity(intent);
-                        return true;
-                    case R.id.action_all_tours:
-                        intent = new Intent(mContext, AllToursActivity.class);
-                        startActivity(intent);
-                        return true;
-                    case R.id.action_profile:
-                        intent = new Intent(mContext, ProfileActivity.class);
-                        startActivity(intent);
-                        return true;
+            public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                if (response.isSuccessful()) {
+                    JsonObject jsonObject = response.body();
+                    if (jsonObject != null) {
+                        if (jsonObject.get("success").getAsBoolean()) {
+                            int count = jsonObject.get("count").getAsInt();
+                            if (count > 0) {
+                                List<TourData> tours = parseTourData(jsonObject);
+                                // Update the RecyclerView adapter with the tour list
+                                toursAdapter.setTours(tours);
+                            } else {
+                                Toast.makeText(AllToursActivity.this, "No tours found in the response", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            String message = jsonObject.get("message").getAsString();
+                            Toast.makeText(AllToursActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(AllToursActivity.this, "Error: Response body is null", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(AllToursActivity.this, "Error: Fetching data failed", Toast.LENGTH_SHORT).show();
                 }
-                return false;
+            }
+
+            @Override
+            public void onFailure(Call<JsonObject> call, Throwable t) {
+                Log.e("error", "Error is: " + t);
+                Toast.makeText(AllToursActivity.this, "Error: Fetching data failed", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    private void fetchTours() {
-        // Clear existing tour cards
-        tourCardContainer.removeAllViews();
-
-        // Create a static list of dummy TourData objects
-        List<TourData> tours = createDummyTours();
-
-        // Hide loading and error texts
-        loadingText.setVisibility(View.GONE);
-        errorText.setVisibility(View.GONE);
-
-        // Populate tour cards
-        for (TourData tour : tours) {
-            View tourCardView = getLayoutInflater().inflate(R.layout.activity_tour_card, tourCardContainer, false);
-            TourCard tourCard = new TourCard(this, tourCardView);
-            tourCard.bindTourData(tour);
-            tourCardContainer.addView(tourCardView);
-        }
-    }
-
-    private List<TourData> createDummyTours() {
+    private List<TourData> parseTourData(JsonObject jsonObject) {
         List<TourData> tours = new ArrayList<>();
 
-        // Create 5 dummy TourData objects and add them to the list
-        for (int i = 1; i <= 5; i++) {
-            TourData tour = new TourData();
-            tour.setTitle("Tour " + i);
-            tour.setCity("City " + i);
-            tour.setPhoto("dummy_photo_url_" + i);
-            tours.add(tour);
+        if (jsonObject.has("data")) {
+            JsonArray jsonArray = jsonObject.getAsJsonArray("data");
+
+            for (JsonElement jsonElement : jsonArray) {
+                JsonObject tourObject = jsonElement.getAsJsonObject();
+
+                // Extract the tour properties from the JSON object
+                int id = tourObject.get("id").getAsInt();
+                String title = tourObject.get("title").getAsString();
+                String location = tourObject.get("city").getAsString();
+                double price = Double.parseDouble(tourObject.get("price").getAsString());
+                boolean isFeatured = tourObject.get("featured").getAsBoolean();
+
+                // Create a TourData object with the extracted properties
+                TourData tour = new TourData(id, title, location, price, isFeatured);
+                tours.add(tour);
+            }
         }
 
         return tours;

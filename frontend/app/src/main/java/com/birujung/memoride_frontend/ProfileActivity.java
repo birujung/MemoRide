@@ -2,10 +2,12 @@ package com.birujung.memoride_frontend;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,6 +16,10 @@ import com.birujung.memoride_frontend.helper.AuthContext;
 import com.birujung.memoride_frontend.model.UserData;
 import com.bumptech.glide.Glide;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.gson.Gson;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class ProfileActivity extends AppCompatActivity {
 
@@ -59,7 +65,6 @@ public class ProfileActivity extends AppCompatActivity {
         });
 
         // Initialize views
-        profilePhotoImageView = findViewById(R.id.profile_photo_image);
         usernameTextView = findViewById(R.id.username_text);
         emailTextView = findViewById(R.id.email_text);
         roleTextView = findViewById(R.id.role_text);
@@ -71,13 +76,17 @@ public class ProfileActivity extends AppCompatActivity {
         // Get user data from shared preferences
         UserData userData = authContext.getUser();
 
-        // Set user data to views
-        usernameTextView.setText(userData.getUsername());
-        emailTextView.setText(userData.getEmail());
-        roleTextView.setText(userData.getRole());
-        fullNameTextView.setText(userData.getFullName());
-        genderTextView.setText(userData.getGender());
-        phoneNumTextView.setText(userData.getPhoneNumber());
-        membershipLevelTextView.setText(userData.getMembershipLevel());
+        if (userData != null) {
+            // Set user data to views
+            usernameTextView.setText(userData.getUsername());
+            emailTextView.setText(userData.getEmail());
+            roleTextView.setText(userData.getRole());
+            fullNameTextView.setText(userData.getFullName());
+            genderTextView.setText(userData.getGender());
+            phoneNumTextView.setText(userData.getPhoneNumber());
+            membershipLevelTextView.setText(userData.getMembershipLevel());
+        } else {
+            Toast.makeText(ProfileActivity.this, "User profile data not found", Toast.LENGTH_SHORT).show();
+        }
     }
 }

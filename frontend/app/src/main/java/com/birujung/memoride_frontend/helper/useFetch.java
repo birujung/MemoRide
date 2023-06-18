@@ -1,52 +1,73 @@
 package com.birujung.memoride_frontend.helper;
 
 import android.content.Context;
-import android.util.Log;
+import android.os.AsyncTask;
 
-import com.birujung.memoride_frontend.TourCard;
-import com.birujung.memoride_frontend.request.BaseAPIService;
-import com.birujung.memoride_frontend.request.RetrofitClient;
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.lang.reflect.Type;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
+public class useFetch extends AsyncTask<String, Void, String> {
+    private Context context;
+    private OnDataFetchListener listener;
 
-public class useFetch {
-
-    public static <T> void fetchTour(Context context, String url, String tourId, final FetchCallback<T> callback) {
-        Retrofit retrofit = RetrofitClient.getClient(url);
-        BaseAPIService service = retrofit.create(BaseAPIService.class);
-
-        Call<TourCard> call = service.getTour(tourId);
-        call.enqueue(new Callback<TourCard>() {
-            @Override
-            public void onResponse(Call<TourCard> call, Response<TourCard> response) {
-                if (response.isSuccessful()) {
-                    TourCard tourCard = response.body();
-                    callback.onSuccess(tourCard);
-                } else {
-                    Log.e("useFetch", "Response not successful. Code: " + response.code());
-                    callback.onError("Failed to fetch tour data");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<TourCard> call, Throwable t) {
-                Log.e("useFetch", "Request failed: " + t.getMessage());
-                callback.onError("Request failed");
-            }
-        });
+    public useFetch(Context context, OnDataFetchListener listener) {
+        this.context = context;
+        this.listener = listener;
     }
 
-    public interface FetchCallback<T> {
-        void onSuccess(TourCard data);
-        void onError(String errorMessage);
+    @Override
+    protected String doInBackground(String... params) {
+        String urlString = params[0];
+        String result = "";
+
+        try {
+            URL url = new URL(urlString);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("GET");
+
+            InputStream inputStream = connection.getInputStream();
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+
+            StringBuilder stringBuilder = new StringBuilder();
+            String line;
+
+            while ((line = bufferedReader.readLine()) != null) {
+                stringBuilder.append(line);
+            }
+
+            result = stringBuilder.toString();
+
+            bufferedReader.close();
+            inputStream.close();
+            connection.disconnect();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
+    @Override
+    protected void onPostExecute(String result) {
+        try {
+            JSONArray jsonArray = new JSONArray(result);
+            listener.onDataFetched(jsonArray);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            listener.onDataFetchError(e.getMessage());
+        }
+    }
+
+    public interface OnDataFetchListener {
+        void onDataFetched(JSONArray data);
+        void onDataFetchError(String errorMessage);
     }
 }

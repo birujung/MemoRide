@@ -30,7 +30,6 @@ public class AuthContext {
         editor.apply();
     }
 
-
     public UserData getUser() {
         Gson gson = new Gson();
         String userDataJson = sharedPreferences.getString(KEY_USER, null);

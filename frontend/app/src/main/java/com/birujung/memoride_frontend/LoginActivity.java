@@ -23,6 +23,8 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -62,49 +64,66 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 loading = ProgressDialog.show(mContext, null, "Loading...", true, false);
-                requestLogin();
+                requestLogin(emailInput, passwordInput);
             }
         });
 
         registerLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(mContext, MainActivity.class));
+                startActivity(new Intent(mContext, RegisterActivity.class));
             }
         });
     }
 
-    private void requestLogin() {
-        LoginData loginData = new LoginData(emailInput.getText().toString(), passwordInput.getText().toString());
+    private void requestLogin(EditText email, EditText password) {
+        String emailValue = email.getText().toString();
+        String passwordValue = password.getText().toString();
 
-        mApiService.login(loginData)
-                .enqueue(new Callback<UserData>() {
-                    @Override
-                    public void onResponse(Call<UserData> call, Response<UserData> response) {
-                        if (response.isSuccessful()) {
-                            loading.dismiss();
+        LoginData loginData = new LoginData(emailValue, passwordValue);
 
-                            // Handle the successful login response
-                            UserData userData = response.body();
+        Call<ResponseBody> call = mApiService.login(loginData);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()) {
+                    loading.dismiss();
+                    try{
+                        String responseBody = response.body().string();
+                        JSONObject jsonObject = new JSONObject(responseBody);
+                        JSONObject userDataJson = jsonObject.getJSONObject("data");
+                        UserData userData = new UserData();
+                        userData.setUsername(userDataJson.getString("username"));
+                        userData.setEmail(userDataJson.getString("email"));
+                        userData.setRole(jsonObject.getString("role"));
+                        userData.setFullName(userDataJson.getString("full_name"));
+                        userData.setGender(userDataJson.getString("gender"));
+                        userData.setPhoneNumber(userDataJson.getString("phone_num"));
+                        userData.setMembershipLevel(userDataJson.getString("membership_level"));
 
-                            // Set the user information in the AuthContext
-                            authContext.setUser(userData);
+                        // Store user data in SharedPreferences
+                        authContext.setUser(userData);
+                        Log.d("check","Check: " + userData);
 
-                            Toast.makeText(mContext, "Login successful", Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(mContext, MainActivity.class);
-                            startActivity(intent);
-                        } else {
-                            loading.dismiss();
-                            Toast.makeText(mContext, "Login failed", Toast.LENGTH_SHORT).show();
-                        }
+                        Toast.makeText(mContext, "Login successful", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(mContext, MainActivity.class);
+                        startActivity(intent);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
+                } else {
+                    loading.dismiss();
+                    Toast.makeText(mContext, "Login failed", Toast.LENGTH_SHORT).show();
+                }
+            }
 
-
-                    @Override
-                    public void onFailure(Call<UserData> call, Throwable t) {
-                        Log.e("debug", "onFailure: ERROR > " + t.toString());
-                        loading.dismiss();
-                    }
-                });
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.e("debug", "onFailure: ERROR > " + t.toString());
+                loading.dismiss();
+            }
+        });
     }
 }

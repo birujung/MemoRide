@@ -32,15 +32,15 @@ public class UserData {
     @SerializedName("membership_level")
     private String membershipLevel;
 
-    public UserData(String username, String email, String photo, String role, String fullName, String gender, String phoneNum, String membershipLevel) {
+    private String token;
+
+    public UserData() {
         this.username = username;
         this.email = email;
-        this.password = email;
-        this.photo = photo;
         this.role = role;
         this.fullName = fullName;
         this.gender = gender;
-        this.phoneNumber = phoneNum;
+        this.phoneNumber = phoneNumber;
         this.membershipLevel = membershipLevel;
     }
 
@@ -103,5 +103,16 @@ public class UserData {
         this.membershipLevel = membershipLevel;
     }
 
+    public void setToken(String token) {
+        this.token = token;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void setPhoto(String photo) {
+        this.photo = photo;
+    }
 }
 

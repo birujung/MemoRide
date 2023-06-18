@@ -33,85 +33,60 @@ public class TourData {
     @SerializedName("featured")
     private boolean featured;
 
-    // Add getters and setters for the fields
+    public TourData(int id, String title, String city, String photo, String distance, String s, String description, double price, int maxGroupSize, boolean featured) {
+        this.id = id;
+        this.title = title;
+        this.city = city;
+        this.photo = photo;
+        this.price = price;
+        this.featured = featured;
+    }
+
+    public TourData(int id, String title, String location, double price, boolean isFeatured) {
+        this.id = id;
+        this.title = title;
+        this.city = location;
+        this.price = price;
+        this.featured = isFeatured;
+    }
 
     public int getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getCity() {
         return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
     }
 
     public String getAddress() {
         return address;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
     public double getDistance() {
         return distance;
-    }
-
-    public void setDistance(double distance) {
-        this.distance = distance;
     }
 
     public String getPhoto() {
         return photo;
     }
 
-    public void setPhoto(String photo) {
-        this.photo = photo;
-    }
-
     public String getDescription() {
         return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public double getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
     public int getMaxGroupSize() {
         return maxGroupSize;
     }
 
-    public void setMaxGroupSize(int maxGroupSize) {
-        this.maxGroupSize = maxGroupSize;
-    }
-
     public boolean isFeatured() {
         return featured;
-    }
-
-    public void setFeatured(boolean featured) {
-        this.featured = featured;
     }
 }
