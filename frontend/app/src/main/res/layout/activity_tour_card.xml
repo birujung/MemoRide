@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/tour_img_image"
+        android:layout_width="300dp"
+        android:layout_height="200dp"
+        android:scaleType="centerCrop" />
+
+    <TextView
+        android:id="@+id/tour_location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="location"/>
+
+    <TextView
+        android:id="@+id/tour_rating"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="rating"/>
+
+    <TextView
+        android:id="@+id/tour_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="title"/>
+
+    <Button
+        android:id="@+id/book_now_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Book Now" />
+
+</LinearLayout>

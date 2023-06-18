@@ -12,6 +12,8 @@ public class UserData {
     @SerializedName("email")
     private String email;
 
+    private String password;
+
     @SerializedName("photo")
     private String photo;
 
@@ -30,11 +32,17 @@ public class UserData {
     @SerializedName("membership_level")
     private String membershipLevel;
 
-    @SerializedName("created_at")
-    private String createdAt;
-
-    @SerializedName("updated_at")
-    private String updatedAt;
+    public UserData(String username, String email, String photo, String role, String fullName, String gender, String phoneNum, String membershipLevel) {
+        this.username = username;
+        this.email = email;
+        this.password = email;
+        this.photo = photo;
+        this.role = role;
+        this.fullName = fullName;
+        this.gender = gender;
+        this.phoneNumber = phoneNum;
+        this.membershipLevel = membershipLevel;
+    }
 
     public int getId() {
         return id;
@@ -43,10 +51,18 @@ public class UserData {
     public String getUsername() {
         return username;
     }
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
     public String getEmail() {
         return email;
     }
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() { return password; }
 
     public String getPhoto() {
         return photo;
@@ -55,29 +71,37 @@ public class UserData {
     public String getRole() {
         return role;
     }
+    public void setRole(String role) {
+        this.role = role;
+    }
 
     public String getFullName() {
         return fullName;
+    }
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
     public String getGender() {
         return gender;
     }
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
 
     public String getPhoneNumber() {
         return phoneNumber;
+    }
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     public String getMembershipLevel() {
         return membershipLevel;
     }
-
-    public String getCreatedAt() {
-        return createdAt;
+    public void setMembershipLevel(String membershipLevel) {
+        this.membershipLevel = membershipLevel;
     }
 
-    public String getUpdatedAt() {
-        return updatedAt;
-    }
 }
 

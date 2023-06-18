@@ -4,7 +4,6 @@ import com.birujung.memoride_frontend.helper.LoginData;
 import com.birujung.memoride_frontend.model.UserData;
 import com.birujung.memoride_frontend.request.BaseAPIService;
 import com.birujung.memoride_frontend.request.BaseAPIUtils;
-import com.birujung.memoride_frontend.helper.TokenResponse;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -19,12 +18,17 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class Login extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity {
     EditText emailInput;
     EditText passwordInput;
     Button loginButton;
@@ -74,16 +78,17 @@ public class Login extends AppCompatActivity {
         LoginData loginData = new LoginData(emailInput.getText().toString(), passwordInput.getText().toString());
 
         mApiService.login(loginData)
-                .enqueue(new Callback<ResponseBody>() {
+                .enqueue(new Callback<UserData>() {
                     @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    public void onResponse(Call<UserData> call, Response<UserData> response) {
                         if (response.isSuccessful()) {
                             loading.dismiss();
+
                             // Handle the successful login response
+                            UserData userData = response.body();
 
                             // Set the user information in the AuthContext
-                            String username = emailInput.getText().toString();
-                            authContext.setUser(username);
+                            authContext.setUser(userData);
 
                             Toast.makeText(mContext, "Login successful", Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(mContext, MainActivity.class);
@@ -94,13 +99,12 @@ public class Login extends AppCompatActivity {
                         }
                     }
 
+
                     @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    public void onFailure(Call<UserData> call, Throwable t) {
                         Log.e("debug", "onFailure: ERROR > " + t.toString());
                         loading.dismiss();
                     }
                 });
     }
-
-
 }
