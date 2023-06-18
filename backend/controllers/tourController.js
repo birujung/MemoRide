@@ -1,6 +1,16 @@
 import { pool } from "../index.js";
 
-// Create new tour
+/**
+ * Create a new tour.
+ *
+ * @async
+ * @name createTour
+ * @function
+ * @memberof module:controllers/tourController
+ * @param {object} req - The request object.
+ * @param {object} res - The response object.
+ * @returns {void}
+ */
 export const createTour = async (req, res) => {
   const {
     title,
@@ -48,7 +58,17 @@ export const createTour = async (req, res) => {
   }
 };
 
-// Update tour
+/**
+ * Update an existing tour.
+ *
+ * @async
+ * @name updateTour
+ * @function
+ * @memberof module:controllers/tourController
+ * @param {object} req - The request object.
+ * @param {object} res - The response object.
+ * @returns {void}
+ */
 export const updateTour = async (req, res) => {
   const id = req.params.id;
 
@@ -86,7 +106,17 @@ export const updateTour = async (req, res) => {
   }
 };
 
-// Delete tour
+/**
+ * Delete a tour.
+ *
+ * @async
+ * @name deleteTour
+ * @function
+ * @memberof module:controllers/tourController
+ * @param {object} req - The request object.
+ * @param {object} res - The response object.
+ * @returns {void}
+ */
 export const deleteTour = async (req, res) => {
   const id = req.params.id;
 
@@ -111,7 +141,17 @@ export const deleteTour = async (req, res) => {
   }
 };
 
-// Get single tour
+/**
+ * Get a single tour by ID.
+ *
+ * @async
+ * @name getSingleTour
+ * @function
+ * @memberof module:controllers/tourController
+ * @param {object} req - The request object.
+ * @param {object} res - The response object.
+ * @returns {void}
+ */
 export const getSingleTour = async (req, res) => {
   const id = req.params.id;
 
@@ -138,7 +178,17 @@ export const getSingleTour = async (req, res) => {
   }
 };
 
-// Get all tours
+/**
+ * Get all tours.
+ *
+ * @async
+ * @name getAllTour
+ * @function
+ * @memberof module:controllers/tourController
+ * @param {object} req - The request object.
+ * @param {object} res - The response object.
+ * @returns {void}
+ */
 export const getAllTour = async (req, res) => {
   const page = parseInt(req.query.page) || 0;
   const limit = 8;
@@ -168,7 +218,17 @@ export const getAllTour = async (req, res) => {
   }
 };
 
-// Get tour by search
+/**
+ * Get tours by search parameters.
+ *
+ * @async
+ * @name getTourBySearch
+ * @function
+ * @memberof module:controllers/tourController
+ * @param {object} req - The request object.
+ * @param {object} res - The response object.
+ * @returns {void}
+ */
 export const getTourBySearch = async (req, res) => {
   const { city, distance, maxGroupSize } = req.query;
 
@@ -195,7 +255,17 @@ export const getTourBySearch = async (req, res) => {
   }
 };
 
-// Get featured tours
+/**
+ * Get featured tours.
+ *
+ * @async
+ * @name getFeaturedTours
+ * @function
+ * @memberof module:controllers/tourController
+ * @param {object} req - The request object.
+ * @param {object} res - The response object.
+ * @returns {void}
+ */
 export const getFeaturedTours = async (req, res) => {
   try {
     const query = {
@@ -226,7 +296,17 @@ export const getFeaturedTours = async (req, res) => {
   }
 };
 
-// Get tour count
+/**
+ * Get the count of tours.
+ *
+ * @async
+ * @name getTourCount
+ * @function
+ * @memberof module:controllers/tourController
+ * @param {object} req - The request object.
+ * @param {object} res - The response object.
+ * @returns {void}
+ */
 export const getTourCount = async (req, res) => {
   try {
     const query = {

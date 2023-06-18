@@ -1,5 +1,16 @@
 import { pool } from "../index.js";
 
+/**
+ * Create a new review for a tour.
+ *
+ * @async
+ * @name createReview
+ * @function
+ * @memberof module:controllers/reviewController
+ * @param {object} req - The request object.
+ * @param {object} res - The response object.
+ * @returns {void}
+ */
 export const createReview = async (req, res) => {
   const tourId = req.params.tourId;
   const { username, reviewText, rating } = req.body;
@@ -27,6 +38,17 @@ export const createReview = async (req, res) => {
   }
 };
 
+/**
+ * Get all reviews for a tour.
+ *
+ * @async
+ * @name getAllReviews
+ * @function
+ * @memberof module:controllers/reviewController
+ * @param {object} req - The request object.
+ * @param {object} res - The response object.
+ * @returns {void}
+ */
 export const getAllReviews = async (req, res) => {
   const { tourId } = req.params;
 
@@ -53,6 +75,17 @@ export const getAllReviews = async (req, res) => {
   }
 };
 
+/**
+ * Get all reviews by a user.
+ *
+ * @async
+ * @name getUserReviews
+ * @function
+ * @memberof module:controllers/reviewController
+ * @param {object} req - The request object.
+ * @param {object} res - The response object.
+ * @returns {void}
+ */
 export const getUserReviews = async (req, res) => {
   const { userId } = req.params;
 

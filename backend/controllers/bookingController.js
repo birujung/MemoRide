@@ -1,7 +1,18 @@
 import { pool } from "../index.js";
 import Booking from "../models/Booking.js";
 
-// create new booking
+/**
+ * Create a new booking.
+ *
+ * @async
+ * @name createBooking
+ * @function
+ * @memberof module:controllers/bookingController
+ * @param {object} req - The request object.
+ * @param {object} res - The response object.
+ * @returns {void}
+ * @throws {object} Error object if booking creation fails.
+ */
 export const createBooking = async (req, res) => {
   const { tour_name, group_size, book_at } = req.body;
   const user_id = req.user.id;
@@ -41,7 +52,15 @@ export const createBooking = async (req, res) => {
   }
 };
 
-// Function to calculate membership level based on booking count
+/**
+ * Calculate the membership level based on the booking count.
+ *
+ * @name getMembershipLevel
+ * @function
+ * @memberof module:controllers/bookingController
+ * @param {number} bookingCount - The number of bookings made by the user.
+ * @returns {string} The membership level.
+ */
 const getMembershipLevel = (bookingCount) => {
   if (bookingCount < 2) {
     return "Bronze";
@@ -56,7 +75,17 @@ const getMembershipLevel = (bookingCount) => {
   }
 };
 
-// Function to update user's membership level
+/**
+ * Update the user's membership level based on the booking count.
+ *
+ * @async
+ * @name updateMembershipLevel
+ * @function
+ * @memberof module:controllers/bookingController
+ * @param {number} user_id - The ID of the user.
+ * @returns {void}
+ * @throws {object} Error object if the membership level update fails.
+ */
 const updateMembershipLevel = async (user_id) => {
   try {
     const query = `
@@ -85,7 +114,17 @@ const updateMembershipLevel = async (user_id) => {
   }
 };
 
-// get single booking
+/**
+ * Get a single booking by ID.
+ *
+ * @async
+ * @name getBooking
+ * @function
+ * @memberof module:controllers/bookingController
+ * @param {object} req - The request object.
+ * @param {object} res - The response object.
+ * @returns {void}
+ */
 export const getBooking = async (req, res) => {
   const { id } = req.params;
 
@@ -122,7 +161,17 @@ export const getBooking = async (req, res) => {
   }
 };
 
-// get all bookings
+/**
+ * Get all bookings.
+ *
+ * @async
+ * @name getAllBooking
+ * @function
+ * @memberof module:controllers/bookingController
+ * @param {object} req - The request object.
+ * @param {object} res - The response object.
+ * @returns {void}
+ */
 export const getAllBooking = async (req, res) => {
   try {
     const query = `
@@ -148,7 +197,17 @@ export const getAllBooking = async (req, res) => {
   }
 };
 
-// get user bookings
+/**
+ * Get all bookings for a specific user.
+ *
+ * @async
+ * @name getUserBookings
+ * @function
+ * @memberof module:controllers/bookingController
+ * @param {object} req - The request object.
+ * @param {object} res - The response object.
+ * @returns {void}
+ */
 export const getUserBookings = async (req, res) => {
   const { userId } = req.params;
 

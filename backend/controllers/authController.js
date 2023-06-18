@@ -2,7 +2,18 @@ import { pool } from "../index.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-// register user
+/**
+ * Register a new user.
+ *
+ * @async
+ * @name register
+ * @function
+ * @memberof module:controllers/usersController
+ * @param {object} req - The request object.
+ * @param {object} res - The response object.
+ * @returns {void}
+ * @throws {object} Error object if registration fails.
+ */
 export const register = async (req, res) => {
   try {
     const { username, email, password, photo, role, full_name, gender, phone_num } = req.body;
@@ -57,7 +68,18 @@ export const register = async (req, res) => {
   }
 };
 
-// login user
+/**
+ * Log in a user.
+ *
+ * @async
+ * @name login
+ * @function
+ * @memberof module:controllers/usersController
+ * @param {object} req - The request object.
+ * @param {object} res - The response object.
+ * @returns {void}
+ * @throws {object} Error object if login fails.
+ */
 export const login = async (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
